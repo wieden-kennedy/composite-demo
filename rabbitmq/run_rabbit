@@ -1,0 +1,3 @@
+#!/bin/bash
+chown -R rabbitmq:rabbitmq /var/lib/rabbitmq/mnesia
+rabbitmq-server start

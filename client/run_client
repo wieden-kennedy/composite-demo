@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Make sure client is up-to-date
+COMPOSITE_CLIENT_REPO="https://github.com/wieden-kennedy/composite-client"
+COMPOSITE_EXAMPLE_CLIENT_PATH="/home/vagrant/composite-client"
+
+# if the client repo
+if [ -e $COMPOSITE_EXAMPLE_CLIENT_PATH ]; then
+    rm -rf $COMPOSITE_EXAMPLE_CLIENT_PATH
+fi
+
+git clone $COMPOSITE_CLIENT_REPO $COMPOSITE_EXAMPLE_CLIENT_PATH
+
+#start NGINX server
+nginx

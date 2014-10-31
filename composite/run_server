@@ -1,0 +1,63 @@
+#!/bin/bash
+# Shut down Tomcat if it is running
+tomcat_running=`ps -ef | grep tomcat | grep -v grep | wc -l`
+if [ `echo tomcat_running` -ne "0" ]; then
+    echo ">> Stopping Tomcat..."
+    sh /opt/tomcat/bin/shutdown.sh
+fi
+
+echo ">> Ensuring most recent Composite source build is on FS..."
+if [ ! -e /usr/local/composite ]; then
+    rm -rf /usr/local/composite
+fi
+git clone https://github.com/wieden-kennedy/composite /usr/local/composite
+
+# replace placeholder ip addresses with current ip addresses of linked containers
+echo ">> Updating IP addresses for CouchDB and RabbitMQ services..."
+echo ">>CouchDB: $DATABASE_PORT_5984_TCP_ADDR"
+echo ">>RabbitMQ: $BROKER_PORT_61613_TCP_ADDR"
+sed -e "s/COUCHDB_HOST/$DATABASE_PORT_5984_TCP_ADDR/" /usr/local/composite/pom.xml > /usr/local/composite/pom.xml.bak
+
+sed -e "s/COUCHDB_USERNAME/admin/" /usr/local/composite/pom.xml.bak > /usr/local/composite/pom.xml.bak2
+mv /usr/local/composite/pom.xml.bak2 /usr/local/composite/pom.xml.bak
+
+sed -e "s/COUCHDB_PASSCODE/password/" /usr/local/composite/pom.xml.bak > /usr/local/composite/pom.xml.bak2
+mv /usr/local/composite/pom.xml.bak2 /usr/local/composite/pom.xml.bak
+
+sed -e "s/RABBITMQ_HOST/$BROKER_PORT_61613_TCP_ADDR/" /usr/local/composite/pom.xml.bak > /usr/local/composite/pom.xml.bak2
+mv /usr/local/composite/pom.xml.bak2 /usr/local/composite/pom.xml.bak
+
+sed -e "s/RABBITMQ_CLIENT_LOGIN/admin/" /usr/local/composite/pom.xml.bak > /usr/local/composite/pom.xml.bak2
+mv /usr/local/composite/pom.xml.bak2 /usr/local/composite/pom.xml.bak
+
+sed -e "s/RABBITMQ_CLIENT_PASSCODE/password/" /usr/local/composite/pom.xml.bak > /usr/local/composite/pom.xml.bak2
+mv /usr/local/composite/pom.xml.bak2 /usr/local/composite/pom.xml.bak
+
+sed -e "s/RABBITMQ_SYSTEM_LOGIN/admin/" /usr/local/composite/pom.xml.bak > /usr/local/composite/pom.xml.bak2
+mv /usr/local/composite/pom.xml.bak2 /usr/local/composite/pom.xml.bak
+
+sed -e "s/RABBITMQ_SYSTEM_PASSCODE/password/" /usr/local/composite/pom.xml.bak > /usr/local/composite/pom.xml.bak2
+mv /usr/local/composite/pom.xml.bak2 /usr/local/composite/pom.xml.bak
+
+mv /usr/local/composite/pom.xml.bak /usr/local/composite/pom.xml
+
+echo ">> Building Composite with Maven..."
+cd /usr/local/composite && /usr/bin/mvn -q -P local -DskipTests clean package
+
+echo ">>Moving Composite war file into Tomcat directory..."
+war_file=`ls target | grep composite | grep war`
+rm -rf /opt/tomcat/webapps/ROOT*
+cp -prv target/$war_file /opt/tomcat/webapps/ROOT.war
+
+if [ ! -e /opt/tomcat/logs/catalina.out ];then
+    touch /opt/tomcat/logs/catalina.out
+fi
+
+echo ">> Starting Tomcat in 3.."
+sleep 1
+echo ">> 2..."
+sleep 1
+echo ">> 1..."
+sleep 1
+sh /opt/tomcat/bin/startup.sh && tail -f /opt/tomcat/logs/catalina.out
+

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+COUCH=`which couchdb`
+
+# run couchdb so it doesn't block
+nohup ${COUCH} > /dev/null 2>&1 &
+echo "==> Waiting 5 seconds for CouchDB to start up..."
+sleep 5
+
+# make sure sessions database is in place
+echo "==> Setting up default Sessions database..."
+/usr/bin/python /usr/local/sbin/couchdb_setup.py -setup-database
+# Ghetto hack by Sir Hacks-a-lot
+/usr/bin/python /usr/local/sbin/couchdb_setup.py -setup-database
+
+# kill the running couchdb process
+kill -9 `ps -ef | grep couchdb | grep -v grep | awk '{print $2}'`
+
+# run couchdb again so it blocks and keeps container alive
+${COUCH}
