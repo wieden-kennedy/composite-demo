@@ -1,7 +1,7 @@
 Composite Demo
 ==============
 
-A tool that can be used to build the `Composite <https://github.com/wieden-kennedy/composite>`_ service as a set of linked Docker containers.
+A tool that can be used to build the `Composite Framework <https://github.com/wieden-kennedy/composite-framework>`_ service as a set of linked Docker containers.
 
 License
 -------
