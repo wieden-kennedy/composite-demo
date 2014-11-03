@@ -51,6 +51,8 @@ The imports can take a few minutes, especially if you're working on a slower con
 
 For each container listed, port mapping goes from container to the Vagrant host to your local machine:
 
+.. cssclass:: table-striped
+.. cssclass:: table-bordered
 +----------------+---------------+-------------+
 | Container      | Service       | Mapped port |
 +================+===============+=============+
