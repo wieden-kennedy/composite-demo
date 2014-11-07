@@ -3,7 +3,7 @@
 THRESHOLD=10
 echo "==> Testing network speed..."
 START=$(date +%s)
-wget -q -O /dev/null https://s3-us-west-2.amazonaws.com/composite-vagrant/docker_assets/speed_test_25.dat
+wget -q -O /dev/null http://demo.compositeframework.io/docker_assets/speed_test_25.dat
 END=$(date +%s)
 DIFF=$((END-START))
 IMPORT='true'

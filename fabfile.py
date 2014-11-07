@@ -13,6 +13,7 @@ env.user = 'vagrant'
 env.password = 'vagrant'
 
 BUILD_CONFIRM = False
+S3_HOST_PATH = http://demo.compositeframework.io
 
 '''
 CONTAINER DEFS
@@ -34,7 +35,7 @@ CONTAINERS = [
         'mirrored_guest_volume': '/usr/local/var/lib/couchdb',
         'startup_command': 'run_couchdb',
         'type': 'service',
-        's3_path': 'https://s3.amazonaws.com/compositeframework.io/static/demo/docker_assets/couchdb.tar'
+        's3_path': '%s/docker_assets/couchdb.tar' % S3_HOST_PATH
     },
     {
         'name': 'rabbitmq',
@@ -44,7 +45,7 @@ CONTAINERS = [
         'mirrored_guest_volume': '/usr/local/var/log/rabbitmq',
         'startup_command': 'run_rabbit',
         'type': 'service',
-        's3_path': 'https://s3.amazonaws.com/compositeframework.io/static/demo/docker_assets/rabbitmq.tar'
+        's3_path': '%s/docker_assets/rabbitmq.tar' % S3_HOST_PATH
     },
     {
         'name': 'client',
@@ -54,7 +55,7 @@ CONTAINERS = [
         'mirrored_guest_volume': '/var/log/nginx',
         'startup_command': 'run_client',
         'type': 'client',
-        's3_path': 'https://s3.amazonaws.com/compositeframework.io/static/demo/docker_assets/client.tar'
+        's3_path': '%s/docker_assets/client.tar' % S3_HOST_PATH
     },
     {
         'name': 'composite',
@@ -64,7 +65,7 @@ CONTAINERS = [
         'mirrored_guest_volume': '/opt/tomcat/logs',
         'startup_command': 'run_server',
         'type': 'server',
-        's3_path': 'https://s3.amazonaws.com/compositeframework.io/static/demo/docker_assets/composite.tar'
+        's3_path': '%s/docker_assets/composite.tar' % S3_HOST_PATH
     }
 ]
 
@@ -251,7 +252,7 @@ def import_container(container_name=None):
     :param container_name: (optional) the container to import
     """
     import_containers = [x for x in CONTAINERS if x['name'] != 'base']
-    
+
     if container_name:
         import_containers = [x for x in import_containers if x['name'] == container_name]
 
@@ -281,7 +282,7 @@ def build(container_name=None):
     build_containers = CONTAINERS
     current_images = local('sudo docker images', capture=True)
     base_container_exists = 'base' in current_images
-    
+
 
     if container_name:
         build_containers = [x for x in build_containers if x['name'] == container_name]
