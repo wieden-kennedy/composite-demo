@@ -13,7 +13,7 @@ env.user = 'vagrant'
 env.password = 'vagrant'
 
 BUILD_CONFIRM = False
-S3_HOST_PATH = http://demo.compositeframework.io
+S3_HOST_PATH = 'http://demo.compositeframework.io'
 
 '''
 CONTAINER DEFS
