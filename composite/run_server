@@ -10,7 +10,7 @@ echo ">> Ensuring most recent Composite source build is on FS..."
 if [ ! -e /usr/local/composite ]; then
     rm -rf /usr/local/composite
 fi
-git clone https://github.com/wieden-kennedy/composite /usr/local/composite
+git clone https://github.com/wieden-kennedy/composite-framework /usr/local/composite-framework
 
 # replace placeholder ip addresses with current ip addresses of linked containers
 echo ">> Updating IP addresses for CouchDB and RabbitMQ services..."
